@@ -1,0 +1,709 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Donation Tracker API",
+    "description": "RTA in JapanがforkしたDonation TrackerのAPI仕様",
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "開発リポジトリ",
+    "url": "https://github.com/rtainjapan/donation-tracker"
+  },
+  "servers": [
+    {
+      "url": "https://tracker.rtain.jp/"
+    }
+  ],
+  "paths": {
+    "/api/v1/search/?type=donation": {
+      "get": {
+        "description": "寄付情報を取得",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "all_comments",
+            "required": false,
+            "description": "プライバシーフィルターを通すかどうか。値はなくて、クエリにkeyがあるか無いかで判定される。指定した場合はログインが必要",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "feed",
+            "required": false,
+            "description": "toprocess: コメント未処理の寄付情報に絞り込む",
+            "schema": {
+              "type": "string",
+              "example": "toprocess"
+            }
+          },
+          {
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "description": "イベントID",
+            "schema": {
+              "type": "number",
+              "example": "4"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "csrftoken",
+            "required": false,
+            "description": "CSRFトークン。all_commentsを指定するなら必要",
+            "schema": {
+              "type": "string",
+              "example": "1234567890asdfghjk; sessionid=zxcvbnm,.lkjhgfdsa;"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerDonations"
+                },
+                "examples": {
+                  "response1": {
+                    "$ref": "#/components/examples/donationResponse1"
+                  },
+                  "response2": {
+                    "$ref": "#/components/examples/donationResponse2"
+                  },
+                  "response3": {
+                    "$ref": "#/components/examples/donationResponse3"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "認証されてない",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/?type=run": {
+      "get": {
+        "description": "イベントのゲーム情報を取得",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "description": "イベントID",
+            "schema": {
+              "type": "number",
+              "example": "4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerRuns"
+                },
+                "examples": {
+                  "response1": {
+                    "$ref": "#/components/examples/runResponse1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/?type=bid": {
+      "get": {
+        "description": "投票情報",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "description": "イベントID",
+            "schema": {
+              "type": "number",
+              "example": "4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerRuns"
+                },
+                "examples": {
+                  "response1": {
+                    "$ref": "#/components/examples/runResponse1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/edit/": {
+      "post": {
+        "description": "寄付のコメント承認",
+        "tags": ["edit"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-CSRFToken",
+            "schema": {
+              "type": "string",
+              "description": "Cookieに入ってるcsrftokenと同じ",
+              "example": "ABCDEFG123456"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "csrftoken",
+            "schema": {
+              "type": "string",
+              "description": "CSRFトークン",
+              "example": "ABCDEFG123456; sessionid=1234567890;"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "commentstate": {
+                    "type": "string",
+                    "example": "APPROVED",
+                    "description": "コメントの承認状態",
+                    "enum": ["APPROVED", "PENDING", "DENIED"]
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "寄付ID",
+                    "example": "1"
+                  },
+                  "readstate": {
+                    "type": "string",
+                    "description": "コメントを読み上げ対象にするかどうか",
+                    "enum": ["APPROVED", "PENDING", "DENIED"],
+                    "example": "IGNORED"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "操作対象種別",
+                    "example": "donation"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerDonations"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "trackerDonations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerDonation"
+        }
+      },
+      "trackerDonation": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.donation"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 5
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "donor": {
+                "type": "integer",
+                "description": "寄付者固有のID",
+                "example": 1
+              },
+              "event": {
+                "type": "integer",
+                "description": "イベントID",
+                "example": 4
+              },
+              "domain": {
+                "type": "string",
+                "description": "どこで寄付したか",
+                "example": "PAYPAL"
+              },
+              "transactionstate": {
+                "type": "string",
+                "description": "寄付のトランザクション状態",
+                "enum": ["PENDING", "COMPLETED", "CANCELLED", "FLAGGED"],
+                "example": "COMPLETED"
+              },
+              "readstate": {
+                "type": "string",
+                "description": "",
+                "example": "PENDING",
+                "enum": ["PENDING", "READYTOREAD", "IGNORED", "READ", "FLAGGED"]
+              },
+              "commentstate": {
+                "type": "string",
+                "description": "コメントの承認状態。コメント無しはABSENT",
+                "example": "APPROVED",
+                "enum": ["ABSENT", "PENDING", "DENIED", "APPROVED", "FLAGGED"]
+              },
+              "amount": {
+                "type": "number",
+                "description": "金額。日本円でも小数点以下が含まれる",
+                "example": 2500.0
+              },
+              "currency": {
+                "type": "string",
+                "description": "単位",
+                "example": "JPY"
+              },
+              "timereceived": {
+                "type": "string",
+                "description": "タイムスタンプ",
+                "example": "2022-08-13T19:44:20.472Z"
+              },
+              "comment": {
+                "type": "string",
+                "description": "コメント。all_commentsを指定しないと載らない",
+                "example": "応援してます！"
+              },
+              "commentlanguage": {
+                "type": "string",
+                "description": "コメントの言語。all_commentsを指定しないと載らない",
+                "example": "un"
+              },
+              "pinned": {
+                "type": "boolean",
+                "description": "",
+                "example": false
+              },
+              "canonical_url": {
+                "type": "string",
+                "description": "各寄付のURL",
+                "example": "https://tracker.rtain.jp/donation/5"
+              },
+              "public": {
+                "type": "string",
+                "description": "名前、金額、タイムスタンプ",
+                "example": "Rちゃん (2500.0) 2022-08-13T19:44:20.472Z"
+              },
+              "donor__alias": {
+                "type": "string",
+                "description": "寄付者名",
+                "example": "Rちゃん"
+              },
+              "donor__alias_num": {
+                "type": "integer",
+                "description": "",
+                "example": 5
+              },
+              "donor__visibility": {
+                "type": "string",
+                "description": "",
+                "example": "ALIAS"
+              },
+              "donor__canonical_url": {
+                "type": "string",
+                "description": "各寄付者のURL",
+                "example": "https://tracker.rtain.jp/donor/1"
+              },
+              "donor__public": {
+                "type": "string",
+                "description": "寄付者名",
+                "example": "Rちゃん"
+              }
+            }
+          }
+        }
+      },
+      "trackerRuns": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerRun"
+        }
+      },
+      "trackerRun": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.speedrun"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 5
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "canonical_url": {
+                "type": "string",
+                "description": "各スピードランののURL",
+                "example": "https://tracker.rtain.jp/run/5"
+              },
+              "category": {
+                "type": "string",
+                "description": "カテゴリ",
+                "example": "Any%"
+              },
+              "commentators": {
+                "type": "string",
+                "description": "解説者。現状のtrackerには値が入ってない",
+                "example": "Rちゃん"
+              },
+              "console": {
+                "type": "string",
+                "description": "機種名",
+                "example": "PlayStation 4"
+              },
+              "coop": {
+                "type": "boolean",
+                "description": "協力プレイかどうか。今のRiJは使ってない",
+                "example": true
+              },
+              "deprecated_runners": {
+                "type": "string",
+                "description": "走者名。複数いる場合は、カンマスペースで区切って並べる",
+                "example": "RTAちゃん, Rくん"
+              },
+              "description": {
+                "type": "string",
+                "description": "詳細説明",
+                "example": "なんやかんや"
+              },
+              "display_name": {
+                "type": "string",
+                "description": "表示名。「ゲーム名 カテゴリ名」の形式",
+                "example": "地球防衛軍5 Any%"
+              },
+              "endtime": {
+                "type": "string",
+                "description": "終了時刻",
+                "example": "2022-08-11T04:20:00Z"
+              },
+              "event": {
+                "type": "integer",
+                "description": "イベントID",
+                "example": 4
+              },
+              "giantbomb_id": {
+                "type": "string",
+                "description": "GiantBomb databaseでのID。無い場合はnull",
+                "example": null
+              },
+              "name": {
+                "type": "string",
+                "description": "ゲーム名",
+                "example": "地球防衛軍５"
+              },
+              "order": {
+                "type": "integer",
+                "description": "スケジュールでの並び順。未指定の場合はnull",
+                "example": 1
+              },
+              "public": {
+                "type": "string",
+                "description": "ゲーム名、カテゴリ名、イベントID",
+                "example": "地球防衛軍5 Any% (event_id: 4)"
+              },
+              "release_year": {
+                "type": "integer",
+                "description": "リリース年",
+                "example": 2007
+              },
+              "run_time": {
+                "type": "string",
+                "description": "いわゆるEST",
+                "example": "1:05:00"
+              },
+              "runners": {
+                "type": "array",
+                "description": "走者IDのリスト",
+                "items": {
+                  "type": "integer",
+                  "example": 166
+                }
+              },
+              "setup_time": {
+                "type": "string",
+                "description": "セットアップタイム",
+                "example": "0:15:00"
+              },
+              "starttime": {
+                "type": "string",
+                "description": "開始時刻",
+                "example": "2022-08-11T03:00:00Z"
+              },
+              "twitch_name": {
+                "type": "string",
+                "description": "Twitchでのゲーム名。今はゲームIDを入れる用途で使ってる",
+                "example": "493080"
+              }
+            }
+          }
+        }
+      },
+      "errorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Permission Denied"
+          },
+          "exception": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "requestUpdate": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "ツイート本文",
+            "type": "string",
+            "example": "走者乙ｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗ"
+          },
+          "media_ids": {
+            "description": "事前にアップロードした画像・動画のID",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["710511363345354753"]
+          },
+          "in_reply_to_status_id": {
+            "description": "リプライ先のツイートID",
+            "type": "string",
+            "example": ""
+          },
+          "attachment_url": {
+            "description": "引用RTの引用元ツイートID",
+            "type": "string",
+            "example": ""
+          }
+        }
+      }
+    },
+    "examples": {
+      "donationResponse1": {
+        "summary": "コメント無し",
+        "value": [
+          {
+            "model": "tracker.donation",
+            "pk": 5,
+            "fields": {
+              "donor": 1,
+              "event": 4,
+              "domain": "PAYPAL",
+              "transactionstate": "COMPLETED",
+              "readstate": "PENDING",
+              "commentstate": "ABSENT",
+              "amount": 2500.0,
+              "currency": "JPY",
+              "timereceived": "2022-08-13T19:44:20.472Z",
+              "comment": "",
+              "commentlanguage": "un",
+              "pinned": false,
+              "canonical_url": "https://tracker.rtain.jp/donation/5",
+              "public": "Rちゃん (2500.00) 2022-08-13 19:44:20.472578+00:00",
+              "donor__alias": "Rちゃん",
+              "donor__alias_num": 8198,
+              "donor__visibility": "ALIAS",
+              "donor__canonical_url": "https://tracker.rtain.jp/donor/１",
+              "donor__public": "Rちゃん"
+            }
+          }
+        ]
+      },
+      "donationResponse2": {
+        "summary": "コメント有り",
+        "value": [
+          {
+            "model": "tracker.donation",
+            "pk": 5,
+            "fields": {
+              "donor": 1,
+              "event": 4,
+              "domain": "PAYPAL",
+              "transactionstate": "COMPLETED",
+              "readstate": "PENDING",
+              "commentstate": "PENDING",
+              "amount": 2500.0,
+              "currency": "JPY",
+              "timereceived": "2022-08-13T19:44:20.472Z",
+              "comment": "応援してます！",
+              "commentlanguage": "un",
+              "pinned": false,
+              "canonical_url": "https://tracker.rtain.jp/donation/5",
+              "public": "Rちゃん (2500.00) 2022-08-13 19:44:20.472578+00:00",
+              "donor__alias": "Rちゃん",
+              "donor__alias_num": 8198,
+              "donor__visibility": "ALIAS",
+              "donor__canonical_url": "https://tracker.rtain.jp/donor/１",
+              "donor__public": "Rちゃん"
+            }
+          }
+        ]
+      },
+      "donationResponse3": {
+        "summary": "all_comments未指定時のレスポンス",
+        "value": [
+          {
+            "model": "tracker.donation",
+            "pk": 5,
+            "fields": {
+              "donor": 1,
+              "event": 4,
+              "domain": "PAYPAL",
+              "transactionstate": "COMPLETED",
+              "readstate": "PENDING",
+              "commentstate": "PENDING",
+              "amount": 2500.0,
+              "currency": "JPY",
+              "timereceived": "2022-08-13T19:44:20.472Z",
+              "pinned": false,
+              "canonical_url": "https://tracker.rtain.jp/donation/5",
+              "public": "Rちゃん (2500.00) 2022-08-13 19:44:20.472578+00:00",
+              "donor__alias": "Rちゃん",
+              "donor__alias_num": 8198,
+              "donor__visibility": "ALIAS",
+              "donor__canonical_url": "https://tracker.rtain.jp/donor/１",
+              "donor__public": "Rちゃん"
+            }
+          }
+        ]
+      },
+      "runResponse1": {
+        "summary": "ゲーム1個",
+        "value": [
+          {
+            "model": "tracker.speedrun",
+            "pk": 125,
+            "fields": {
+              "event": 4,
+              "name": "地球防衛軍5",
+              "display_name": "地球防衛軍5 DLC1&2 Any%",
+              "twitch_name": "493080",
+              "deprecated_runners": "M.雑炊",
+              "console": "PlayStation 4",
+              "commentators": "",
+              "description": "",
+              "starttime": "2022-08-11T03:00:00Z",
+              "endtime": "2022-08-11T04:20:00Z",
+              "order": 1,
+              "run_time": "1:05:00",
+              "setup_time": "0:15:00",
+              "coop": false,
+              "category": "DLC1&2 Any%",
+              "release_year": 2017,
+              "giantbomb_id": null,
+              "runners": [166],
+              "canonical_url": "https://tracker.rtain.jp/run/125",
+              "public": "地球防衛軍5 DLC1&2 Any% (event_id: 4)"
+            }
+          }
+        ]
+      },
+      "bidResponse1": {
+        "summary": "bids",
+        "value": [
+          {
+            "model": "tracker.bid",
+            "pk": 111,
+            "fields": {
+              "event": 4,
+              "speedrun": 138,
+              "parent": null,
+              "name": "プレイ中の目隠し",
+              "state": "CLOSED",
+              "description": "プレイ中の目隠しはどれを使いますか？",
+              "shortdescription": "プレイ中の目隠しはどれを使いますか？",
+              "goal": null,
+              "istarget": false,
+              "allowuseroptions": false,
+              "option_max_length": null,
+              "revealedtime": "2022-08-06T04:49:21Z",
+              "biddependency": null,
+              "total": 188807,
+              "count": 81,
+              "canonical_url": "https://tracker.rtain.jp/bid/111",
+              "public": "大乱闘スマッシュブラザーズDX 目隠し アドベンチャー モード (Run) -- プレイ中の目隠し",
+              "speedrun__name": "大乱闘スマッシュブラザーズDX",
+              "speedrun__display_name": "大乱闘スマッシュブラザーズDX 目隠し アドベンチャー モード",
+              "speedrun__twitch_name": "16282",
+              "speedrun__starttime": "2022-08-11T19:59:00Z",
+              "speedrun__endtime": "2022-08-11T20:29:00Z",
+              "speedrun__order": 15,
+              "speedrun__canonical_url": "https://tracker.rtain.jp/run/138",
+              "speedrun__public": "大乱闘スマッシュブラザーズDX 目隠し アドベンチャー モード (event_id: 4)",
+              "event__short": "rtaijs2022",
+              "event__name": "RTA in Japan Summer 2022",
+              "event__datetime": "2022-08-11T03:00:00Z",
+              "event__timezone": "Asia/Tokyo",
+              "event__canonical_url": "https://tracker.rtain.jp/event/4",
+              "event__public": "RTA in Japan Summer 2022"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
