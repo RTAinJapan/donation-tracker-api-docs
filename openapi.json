@@ -15,6 +15,86 @@
     }
   ],
   "paths": {
+    "/api/v1/search/?type=bid": {
+      "get": {
+        "description": "投票情報。親要素だけ返ってくる。",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "description": "イベントID",
+            "schema": {
+              "type": "number",
+              "example": "4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerBids"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/?type=bidtarget": {
+      "get": {
+        "description": "投票情報。投票対象となる子要素だけ返ってくる。QueryはそれぞれのAnd条件なので、矛盾した指定の仕方をすると空配列になる。",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "description": "イベントID",
+            "schema": {
+              "type": "number",
+              "example": 4
+            }
+          },
+          {
+            "in": "query",
+            "name": "run",
+            "required": false,
+            "description": "RTAのID",
+            "schema": {
+              "type": "number",
+              "example": 138
+            }
+          },
+          {
+            "in": "query",
+            "name": "parent",
+            "required": false,
+            "description": "親のBidWarのID。これに紐づく要素だけ返ってくる",
+            "schema": {
+              "type": "number",
+              "example": 111
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerBidChildren"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/search/?type=donation": {
       "get": {
         "description": "寄付情報を取得",
@@ -96,6 +176,158 @@
         }
       }
     },
+    "/api/v1/search/?type=donor": {
+      "get": {
+        "description": "寄付者情報を取得",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "csrftoken",
+            "required": false,
+            "description": "CSRFトークン。all_commentsを指定するなら必要",
+            "schema": {
+              "type": "string",
+              "example": "1234567890asdfghjk; sessionid=zxcvbnm,.lkjhgfdsa;"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerDonors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "認証されてない",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/?type=milestone": {
+      "get": {
+        "description": "",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "csrftoken",
+            "required": false,
+            "description": "CSRFトークン。all_commentsを指定するなら必要",
+            "schema": {
+              "type": "string",
+              "example": "1234567890asdfghjk; sessionid=zxcvbnm,.lkjhgfdsa;"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "403": {
+            "description": "認証されてない",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/?type=event": {
+      "get": {
+        "description": "",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "csrftoken",
+            "required": false,
+            "description": "CSRFトークン。all_commentsを指定するなら必要",
+            "schema": {
+              "type": "string",
+              "example": "1234567890asdfghjk; sessionid=zxcvbnm,.lkjhgfdsa;"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/trackerEvents"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "認証されてない",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/?type=prize": {
+      "get": {
+        "description": "",
+        "tags": ["search"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "csrftoken",
+            "required": false,
+            "description": "CSRFトークン。all_commentsを指定するなら必要",
+            "schema": {
+              "type": "string",
+              "example": "1234567890asdfghjk; sessionid=zxcvbnm,.lkjhgfdsa;"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "403": {
+            "description": "認証されてない",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/search/?type=run": {
       "get": {
         "description": "イベントのゲーム情報を取得",
@@ -131,19 +363,19 @@
         }
       }
     },
-    "/api/v1/search/?type=bid": {
+    "/api/v1/search/?type=runner": {
       "get": {
-        "description": "投票情報",
+        "description": "",
         "tags": ["search"],
         "parameters": [
           {
-            "in": "query",
-            "name": "event",
+            "in": "cookie",
+            "name": "csrftoken",
             "required": false,
-            "description": "イベントID",
+            "description": "CSRFトークン。all_commentsを指定するなら必要",
             "schema": {
-              "type": "number",
-              "example": "4"
+              "type": "string",
+              "example": "1234567890asdfghjk; sessionid=zxcvbnm,.lkjhgfdsa;"
             }
           }
         ],
@@ -153,12 +385,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/trackerRuns"
-                },
-                "examples": {
-                  "response1": {
-                    "$ref": "#/components/examples/runResponse1"
-                  }
+                  "$ref": "#/components/schemas/trackerRunners"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "認証されてない",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
                 }
               }
             }
@@ -252,6 +489,439 @@
   },
   "components": {
     "schemas": {
+      "trackerBids": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerBid"
+        }
+      },
+      "trackerBid": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.bid"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 5
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "allowuseroptions": {
+                "type": "boolean",
+                "description": "",
+                "example": false
+              },
+              "biddependency": {
+                "type": "integer",
+                "description": "無い時はnull",
+                "example": null
+              },
+              "canonical_url": {
+                "type": "string",
+                "description": "Bid WarのURL",
+                "example": "https://tracker.rtain.jp/bid/1"
+              },
+              "count": {
+                "type": "integer",
+                "description": "投票数",
+                "example": 21
+              },
+              "description": {
+                "type": "string",
+                "description": "Bid Warの詳細文",
+                "example": "走者2名が持つマグカップのカラーを何にしますか？"
+              },
+              "event": {
+                "type": "integer",
+                "description": "イベントID",
+                "example": 4
+              },
+              "event__canonical_url": {
+                "type": "string",
+                "description": "イベントのURL",
+                "example": "https://tracker.rtain.jp/event/2"
+              },
+              "event__datetime": {
+                "type": "string",
+                "description": "イベントの開始時刻",
+                "example": "2021-12-26T03:00:00Z"
+              },
+              "event__name": {
+                "type": "string",
+                "description": "イベント名",
+                "example": "RTA in Japan Winter 2021"
+              },
+              "event__public": {
+                "type": "string",
+                "description": "イベント名",
+                "example": "RTA in Japan Winter 2021"
+              },
+              "event__short": {
+                "type": "string",
+                "description": "URLとかに使われる短いやつ",
+                "example": "rtaijw2021"
+              },
+              "event__timezone": {
+                "type": "string",
+                "description": "イベントのタイムゾーン",
+                "example": "Asia/Tokyo"
+              },
+              "goal": {
+                "type": "integer",
+                "description": "目標金額。無い時はnull",
+                "example": 1000
+              },
+              "istarget": {
+                "type": "boolean",
+                "description": "寄付受付対象の項目であるかどうか。親子関係の末端の要素がtrueになる。",
+                "example": false
+              },
+              "name": {
+                "type": "string",
+                "description": "",
+                "example": "マグカップの色"
+              },
+              "option_max_length": {
+                "type": "integer",
+                "description": "",
+                "example": null
+              },
+              "parent": {
+                "type": "integer",
+                "description": "親のID。自身が親の時はnull",
+                "example": null
+              },
+              "public": {
+                "type": "string",
+                "description": "",
+                "example": "Don't Spill Your Coffee Any% (Run) -- マグカップの色"
+              },
+              "revealedtime": {
+                "type": "string",
+                "description": "寄付の受付開始時刻",
+                "example": "2021-12-25T03:00:00Z"
+              },
+              "shortdescription": {
+                "type": "string",
+                "description": "主にNodeCGとかで表示する時に使う",
+                "example": "マグカップの色は？"
+              },
+              "speedrun": {
+                "type": "integer",
+                "description": "RTAのID",
+                "example": 1
+              },
+              "speedrun__canonical_url": {
+                "type": "string",
+                "description": "RTAのURL",
+                "example": "https://tracker.rtain.jp/run/1"
+              },
+              "speedrun__display_name": {
+                "type": "string",
+                "description": "「ゲーム名 カテゴリ名」の形式",
+                "example": "Don't Spill Your Coffee Any%"
+              },
+              "speedrun__endtime": {
+                "type": "string",
+                "description": "RTAの終了日時",
+                "example": "2021-12-26T10:32:00Z"
+              },
+              "speedrun__name": {
+                "type": "string",
+                "description": "",
+                "example": "Don't Spill Your Coffee"
+              },
+              "speedrun__order": {
+                "type": "integer",
+                "description": "スケジュールでの並び順。未指定の場合はnull",
+                "example": 6
+              },
+              "speedrun__public": {
+                "type": "string",
+                "description": "",
+                "example": "Don't Spill Your Coffee Any% (event_id: 2)"
+              },
+              "speedrun__starttime": {
+                "type": "string",
+                "description": "RTAの開始日時",
+                "example": "2021-12-26T10:14:00Z"
+              },
+              "speedrun__twitch_name": {
+                "type": "string",
+                "description": "Twitchでのゲーム名。今はゲームIDを入れる用途で使ってる",
+                "example": "12345"
+              },
+              "state": {
+                "type": "string",
+                "description": "",
+                "example": "CLOSED"
+              },
+              "total": {
+                "type": "integer",
+                "description": "合計金額",
+                "example": 48394
+              }
+            }
+          }
+        }
+      },
+      "trackerBidChildren": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerBidChild"
+        }
+      },
+      "trackerBidChild": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.bid"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 5
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "allowuseroptions": {
+                "type": "boolean",
+                "description": "",
+                "example": false
+              },
+              "biddependency": {
+                "type": "integer",
+                "description": "無い時はnull",
+                "example": null
+              },
+              "canonical_url": {
+                "type": "string",
+                "description": "Bid WarのURL",
+                "example": "https://tracker.rtain.jp/bid/1"
+              },
+              "count": {
+                "type": "integer",
+                "description": "投票数",
+                "example": 21
+              },
+              "description": {
+                "type": "string",
+                "description": "Bid Warの詳細文",
+                "example": "走者2名が持つマグカップのカラーを何にしますか？"
+              },
+              "event": {
+                "type": "integer",
+                "description": "イベントID",
+                "example": 4
+              },
+              "event__canonical_url": {
+                "type": "string",
+                "description": "イベントのURL",
+                "example": "https://tracker.rtain.jp/event/2"
+              },
+              "event__datetime": {
+                "type": "string",
+                "description": "イベントの開始時刻",
+                "example": "2021-12-26T03:00:00Z"
+              },
+              "event__name": {
+                "type": "string",
+                "description": "イベント名",
+                "example": "RTA in Japan Winter 2021"
+              },
+              "event__public": {
+                "type": "string",
+                "description": "イベント名",
+                "example": "RTA in Japan Winter 2021"
+              },
+              "event__short": {
+                "type": "string",
+                "description": "URLとかに使われる短いやつ",
+                "example": "rtaijw2021"
+              },
+              "event__timezone": {
+                "type": "string",
+                "description": "イベントのタイムゾーン",
+                "example": "Asia/Tokyo"
+              },
+              "goal": {
+                "type": "integer",
+                "description": "目標金額。無い時はnull",
+                "example": 1000
+              },
+              "istarget": {
+                "type": "boolean",
+                "description": "寄付受付対象の項目であるかどうか。親子関係の末端の要素がtrueになる。",
+                "example": true
+              },
+              "name": {
+                "type": "string",
+                "description": "",
+                "example": "マグカップの色"
+              },
+              "option_max_length": {
+                "type": "integer",
+                "description": "",
+                "example": null
+              },
+              "parent": {
+                "type": "integer",
+                "description": "親のID。自身が親の時はnull",
+                "example": 111
+              },
+              "parent__allowuseroptions": {
+                "type": "boolean",
+                "description": "",
+                "example": false
+              },
+              "parent__canonical_url": {
+                "type": "string",
+                "description": "",
+                "example": "https://tracker.rtain.jp/bid/111"
+              },
+              "parent__count": {
+                "type": "integer",
+                "description": "",
+                "example": 81
+              },
+              "parent__event__canonical_url": {
+                "type": "string",
+                "description": "",
+                "example": "https://tracker.rtain.jp/event/4"
+              },
+              "parent__event__datetime": {
+                "type": "string",
+                "description": "",
+                "example": "2022-08-11T03:00:00Z"
+              },
+              "parent__event__name": {
+                "type": "string",
+                "description": "",
+                "example": "RTA in Japan Summer 2022"
+              },
+              "parent__event__public": {
+                "type": "string",
+                "description": "",
+                "example": "RTA in Japan Summer 2022"
+              },
+              "parent__event__short": {
+                "type": "string",
+                "description": "",
+                "example": "rtaijs2022"
+              },
+              "parent__event__timezone": {
+                "type": "string",
+                "description": "",
+                "example": "Asia/Tokyo"
+              },
+              "parent__goal": {
+                "type": "integer",
+                "description": "",
+                "example": null
+              },
+              "parent__name": {
+                "type": "string",
+                "description": "",
+                "example": "プレイ中の目隠し"
+              },
+              "parent__option_max_length": {
+                "type": "integer",
+                "description": "",
+                "example": null
+              },
+              "parent__public": {
+                "type": "string",
+                "description": "",
+                "example": "大乱闘スマッシュブラザーズDX 目隠し アドベンチャー モード (Run) -- プレイ中の目隠し"
+              },
+              "parent__state": {
+                "type": "string",
+                "description": "",
+                "example": "CLOSED"
+              },
+              "parent__total": {
+                "type": "integer",
+                "description": "",
+                "example": 188807
+              },
+              "public": {
+                "type": "string",
+                "description": "",
+                "example": "Don't Spill Your Coffee Any% (Run) -- マグカップの色"
+              },
+              "revealedtime": {
+                "type": "string",
+                "description": "寄付の受付開始時刻",
+                "example": "2021-12-25T03:00:00Z"
+              },
+              "shortdescription": {
+                "type": "string",
+                "description": "主にNodeCGとかで表示する時に使う",
+                "example": "マグカップの色は？"
+              },
+              "speedrun": {
+                "type": "integer",
+                "description": "RTAのID",
+                "example": 1
+              },
+              "speedrun__canonical_url": {
+                "type": "string",
+                "description": "RTAのURL",
+                "example": "https://tracker.rtain.jp/run/1"
+              },
+              "speedrun__display_name": {
+                "type": "string",
+                "description": "「ゲーム名 カテゴリ名」の形式",
+                "example": "Don't Spill Your Coffee Any%"
+              },
+              "speedrun__endtime": {
+                "type": "string",
+                "description": "RTAの終了日時",
+                "example": "2021-12-26T10:32:00Z"
+              },
+              "speedrun__name": {
+                "type": "string",
+                "description": "",
+                "example": "Don't Spill Your Coffee"
+              },
+              "speedrun__order": {
+                "type": "integer",
+                "description": "スケジュールでの並び順。未指定の場合はnull",
+                "example": 6
+              },
+              "speedrun__public": {
+                "type": "string",
+                "description": "",
+                "example": "Don't Spill Your Coffee Any% (event_id: 2)"
+              },
+              "speedrun__starttime": {
+                "type": "string",
+                "description": "RTAの開始日時",
+                "example": "2021-12-26T10:14:00Z"
+              },
+              "speedrun__twitch_name": {
+                "type": "string",
+                "description": "Twitchでのゲーム名。今はゲームIDを入れる用途で使ってる",
+                "example": "12345"
+              },
+              "state": {
+                "type": "string",
+                "description": "",
+                "example": "CLOSED"
+              },
+              "total": {
+                "type": "integer",
+                "description": "合計金額",
+                "example": 48394
+              }
+            }
+          }
+        }
+      },
       "trackerDonations": {
         "type": "array",
         "items": {
@@ -369,6 +1039,183 @@
                 "type": "string",
                 "description": "寄付者名",
                 "example": "Rちゃん"
+              }
+            }
+          }
+        }
+      },
+      "trackerDonors": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerDonor"
+        }
+      },
+      "trackerDonor": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.donor"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 5
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "alias": {
+                "type": "string",
+                "description": "",
+                "example": "Rちゃん"
+              },
+              "alias_num": {
+                "type": "integer",
+                "description": "",
+                "example": 7144
+              },
+              "canonical_url": {
+                "type": "string",
+                "description": "寄付者のURL",
+                "example": "https://tracker.rtain.jp/donor/5"
+              },
+              "public": {
+                "type": "string",
+                "description": "名前",
+                "example": "Rちゃん"
+              },
+              "visibility": {
+                "type": "string",
+                "description": "",
+                "example": "ALIAS"
+              }
+            }
+          }
+        }
+      },
+      "trackerEvents": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerEvent"
+        }
+      },
+      "trackerEvent": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.event"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 1
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "allow_donations": {
+                "type": "boolean",
+                "description": "寄付を受け付けているかどうか",
+                "example": false
+              },
+              "allowed_prize_countries": {
+                "type": "array",
+                "description": "",
+                "example": []
+              },
+              "amount": {
+                "type": "integer",
+                "description": "",
+                "example": 6017034
+              },
+              "avg": {
+                "type": "number",
+                "description": "",
+                "example": 1859.4048207663782
+              },
+              "canonical_url": {
+                "type": "string",
+                "description": "イベントのURL",
+                "example": "https://tracker.rtain.jp/event/1"
+              },
+              "count": {
+                "type": "integer",
+                "description": "寄付数",
+                "example": 3236
+              },
+              "datetime": {
+                "type": "string",
+                "description": "イベントの開始日時",
+                "example": "2021-08-11T03:00:00Z"
+              },
+              "disallowed_prize_regions": {
+                "type": "array",
+                "description": "",
+                "example": []
+              },
+              "hashtag": {
+                "type": "string",
+                "description": "",
+                "example": "RTAinJapan"
+              },
+              "locked": {
+                "type": "boolean",
+                "description": "",
+                "example": true
+              },
+              "max": {
+                "type": "number",
+                "description": "最大寄付額",
+                "example": 95000
+              },
+              "minimumdonation": {
+                "type": "number",
+                "description": "最小寄付額",
+                "example": 100
+              },
+              "name": {
+                "type": "string",
+                "description": "",
+                "example": "RTA in Japan Summer 2021"
+              },
+              "paypalcurrency": {
+                "type": "string",
+                "description": "通貨単位",
+                "example": "JPY"
+              },
+              "paypalemail": {
+                "type": "string",
+                "description": "PayPal寄付先のメールアドレス",
+                "example": "hogehoge@example.com"
+              },
+              "public": {
+                "type": "string",
+                "description": "",
+                "example": "RTA in Japan Summer 2021"
+              },
+              "receivername": {
+                "type": "string",
+                "description": "寄付先団体名",
+                "example": "寄付先団体名"
+              },
+              "short": {
+                "type": "string",
+                "description": "イベントURLとかで使われる短いやつ",
+                "example": "rtaij2021s"
+              },
+              "targetamount": {
+                "type": "number",
+                "description": "目標金額",
+                "example": 100000000
+              },
+              "timezone": {
+                "type": "string",
+                "description": "タイムゾーン",
+                "example": "Asia/Tokyo"
+              },
+              "use_one_step_screening": {
+                "type": "boolean",
+                "description": "寄付画面で1stepでの寄付にするかどうか",
+                "example": true
               }
             }
           }
@@ -495,6 +1342,80 @@
                 "type": "string",
                 "description": "Twitchでのゲーム名。今はゲームIDを入れる用途で使ってる",
                 "example": "493080"
+              }
+            }
+          }
+        }
+      },
+      "trackerRunners": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/trackerRunner"
+        }
+      },
+      "trackerRunner": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "tracker.runner"
+          },
+          "pk": {
+            "type": "integer",
+            "example": 5
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "donor": {
+                "type": "integer",
+                "description": "寄付者と繋げるためのID。現状はみんなnull",
+                "example": null
+              },
+              "name": {
+                "type": "string",
+                "description": "走者名",
+                "example": "RTAちゃん"
+              },
+              "nico": {
+                "type": "string",
+                "description": "ニコニココミュニティID",
+                "example": "co12345678"
+              },
+              "platform": {
+                "type": "string",
+                "description": "配信プラットフォーム",
+                "example": "TWITCH",
+                "enum": ["TWTICH", "MIXER", "FACEBOOK", "YOUTUBE", "NICONICO"]
+              },
+              "pronouns": {
+                "type": "string",
+                "description": "he/him, she/her, they/themとかのアレ",
+                "example": ""
+              },
+              "public": {
+                "type": "string",
+                "description": "",
+                "example": "RTAちゃん"
+              },
+              "stream": {
+                "type": "string",
+                "description": "",
+                "example": ""
+              },
+              "twitch": {
+                "type": "string",
+                "description": "TwitchID",
+                "example": "rta_chan"
+              },
+              "twitter": {
+                "type": "string",
+                "description": "TwitterID。@無し",
+                "example": "rta_chan"
+              },
+              "youtube": {
+                "type": "string",
+                "description": "YoutubeチャンネルID",
+                "example": ""
               }
             }
           }
