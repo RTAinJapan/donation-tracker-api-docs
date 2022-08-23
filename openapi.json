@@ -433,31 +433,7 @@
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "commentstate": {
-                    "type": "string",
-                    "example": "APPROVED",
-                    "description": "コメントの承認状態",
-                    "enum": ["APPROVED", "PENDING", "DENIED"]
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "寄付ID",
-                    "example": "1"
-                  },
-                  "readstate": {
-                    "type": "string",
-                    "description": "コメントを読み上げ対象にするかどうか",
-                    "enum": ["APPROVED", "PENDING", "DENIED"],
-                    "example": "IGNORED"
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "操作対象種別",
-                    "example": "donation"
-                  }
-                }
+                "$ref": "#/components/schemas/trackerEditDonation"
               }
             }
           }
@@ -1421,6 +1397,33 @@
           }
         }
       },
+      "trackerEditDonation": {
+        "type": "object",
+        "properties": {
+          "commentstate": {
+            "type": "string",
+            "example": "APPROVED",
+            "description": "コメントの承認状態。APPROVED, PENDING, DENIED",
+            "enum": ["APPROVED", "PENDING", "DENIED"]
+          },
+          "id": {
+            "type": "string",
+            "description": "寄付ID",
+            "example": "1"
+          },
+          "readstate": {
+            "type": "string",
+            "description": "コメントを読み上げ対象にするかどうか。APPROVED, PENDING, DENIED, IGNORED",
+            "enum": ["APPROVED", "PENDING", "DENIED"],
+            "example": "IGNORED"
+          },
+          "type": {
+            "type": "string",
+            "description": "操作対象種別。donationで固定",
+            "example": "donation"
+          }
+        }
+      },
       "errorResponse": {
         "type": "object",
         "properties": {
@@ -1429,34 +1432,6 @@
             "example": "Permission Denied"
           },
           "exception": {
-            "type": "string",
-            "example": ""
-          }
-        }
-      },
-      "requestUpdate": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "description": "ツイート本文",
-            "type": "string",
-            "example": "走者乙ｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗ"
-          },
-          "media_ids": {
-            "description": "事前にアップロードした画像・動画のID",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": ["710511363345354753"]
-          },
-          "in_reply_to_status_id": {
-            "description": "リプライ先のツイートID",
-            "type": "string",
-            "example": ""
-          },
-          "attachment_url": {
-            "description": "引用RTの引用元ツイートID",
             "type": "string",
             "example": ""
           }
