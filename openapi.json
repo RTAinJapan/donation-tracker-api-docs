@@ -405,7 +405,7 @@
     },
     "/api/v1/edit/": {
       "post": {
-        "description": "寄付のコメント承認",
+        "description": "要素の編集。寄付のコメント承認とかイベント名変更とか。リクエストパラメータには、type,idの他に変更したい任意のkeyをセットする",
         "tags": ["edit"],
         "parameters": [
           {
@@ -433,7 +433,7 @@
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/trackerEditDonation"
+                "$ref": "#/components/schemas/trackerEdit"
               }
             }
           }
@@ -1462,30 +1462,19 @@
           }
         }
       },
-      "trackerEditDonation": {
+      "trackerEdit": {
         "type": "object",
+        "description": "type, idは操作対象のもの。他に操作対象のModelに含まれる好きなkeyとvalueを指定する",
         "properties": {
-          "commentstate": {
+          "type": {
             "type": "string",
-            "example": "APPROVED",
-            "description": "コメントの承認状態。APPROVED, PENDING, DENIED",
-            "enum": ["APPROVED", "PENDING", "DENIED"]
+            "description": "操作対象種別。donationとかeventとか",
+            "example": "donation"
           },
           "id": {
             "type": "string",
-            "description": "寄付ID",
+            "description": "操作対象のID",
             "example": "1"
-          },
-          "readstate": {
-            "type": "string",
-            "description": "コメントを読み上げ対象にするかどうか。APPROVED, PENDING, DENIED, IGNORED",
-            "enum": ["APPROVED", "PENDING", "DENIED"],
-            "example": "IGNORED"
-          },
-          "type": {
-            "type": "string",
-            "description": "操作対象種別。donationで固定",
-            "example": "donation"
           }
         }
       },
